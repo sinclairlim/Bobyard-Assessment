@@ -7,11 +7,22 @@ const Comment = ({ comment, onUpdate, onDelete }) => {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
+    return date.toLocaleString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
     });
+  };
+
+  const isEdited = (dateString, updatedString) => {
+    if (!updatedString) return false;
+    const date = new Date(dateString);
+    const updated = new Date(updatedString);
+    // Consider it edited only if difference is more than 5 seconds
+    return Math.abs(updated - date) > 5000;
   };
 
   const handleSave = async () => {
@@ -50,7 +61,14 @@ const Comment = ({ comment, onUpdate, onDelete }) => {
           )}
           <div className="comment-meta">
             <h3 className="comment-author">{comment.author}</h3>
-            <p className="comment-date">{formatDate(comment.date)}</p>
+            <p className="comment-date">
+              {formatDate(comment.date)}
+              {isEdited(comment.date, comment.updated_at) && (
+                <span className="comment-edited">
+                  {' '}• Edited {formatDate(comment.updated_at)} by Admin
+                </span>
+              )}
+            </p>
           </div>
         </div>
         <div className="comment-actions">

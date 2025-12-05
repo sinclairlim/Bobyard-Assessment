@@ -35,7 +35,7 @@ const CommentList = () => {
     try {
       setSubmitting(true);
       const response = await commentAPI.createComment(newCommentText);
-      setComments([response.data, ...comments]);
+      setComments((prevComments) => [response.data, ...prevComments]);
       setNewCommentText('');
       setError(null);
     } catch (err) {
@@ -49,8 +49,8 @@ const CommentList = () => {
   const handleUpdateComment = async (id, text) => {
     try {
       const response = await commentAPI.updateComment(id, text);
-      setComments(
-        comments.map((comment) =>
+      setComments((prevComments) =>
+        prevComments.map((comment) =>
           comment.id === id ? response.data : comment
         )
       );
@@ -64,7 +64,7 @@ const CommentList = () => {
   const handleDeleteComment = async (id) => {
     try {
       await commentAPI.deleteComment(id);
-      setComments(comments.filter((comment) => comment.id !== id));
+      setComments((prevComments) => prevComments.filter((comment) => comment.id !== id));
       setError(null);
     } catch (err) {
       setError('Failed to delete comment. Please try again.');
